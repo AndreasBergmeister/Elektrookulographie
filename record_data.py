@@ -4,21 +4,24 @@ import json
 
 from open_bci_ganglion import OpenBCIBoard
 
+# Amount Channels
+AMOUTN_CHANNELS = 4
+
 # List containing Lists for each channel
 data = []
 
 # Append 4 Lists (4 channels) to the list
-for i in range(0, 3):
+for i in range(0, AMOUTN_CHANNELS):
     data.append([])
 
 
 # Recording signal
 def handle_sample(sample):
-    for i in range(0, 3):
+    for i in range(0, AMOUTN_CHANNELS):
         data[i].append(sample.channel_data[i])
 
-board = OpenBCIBoard()
-board.start_streaming(handle_sample, 5)
+# board = OpenBCIBoard()
+# board.start_streaming(handle_sample, 5)
 
 
 # Save list to file

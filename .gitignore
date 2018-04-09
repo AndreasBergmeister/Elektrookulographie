@@ -1,5 +1,16 @@
 # Custom (added by me)
+
+# Code Editor Settings
 .vscode
+
+# Generated Data
+records
+
+
+
+
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
