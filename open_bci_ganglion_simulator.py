@@ -1,4 +1,4 @@
-"""A Simulator for the 'open_bci_ganglion' module"""
+""" A Simulator for the 'open_bci_ganglion' module """
 import time
 
 class OpenBCIBoard():
