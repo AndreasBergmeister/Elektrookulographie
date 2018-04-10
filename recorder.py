@@ -2,7 +2,7 @@ import time
 import matplotlib.pyplot as plt
 import json
 
-from open_bci_ganglion import OpenBCIBoard
+from open_bci_ganglion_simulator import OpenBCIBoard
 
 class Recorder():
     """  Records and saves data """
