@@ -276,9 +276,9 @@ class OpenBCIBoard(object):
             call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
-        self.stop();
+        self.stop()
       if self.log:
-        self.log_packet_count = self.log_packet_count + 1;
+        self.log_packet_count = self.log_packet_count + 1
   
       # Checking connection -- timeout and packets dropped
       self.check_connection()
