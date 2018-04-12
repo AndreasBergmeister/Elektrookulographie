@@ -21,12 +21,6 @@ class Recorder():
         except KeyboardInterrupt:
             self.board.stop()
 
-    def handle_sample_simple(self, sample):
-        """Callbackfunction appending the signals of each channel to its apropiate list"""
-        for i, channel in enumerate(sample):
-            self.signal_simple.channels[i].append(channel)
-
-
     def start_recording(self, duration, iterations):
         """ 
         Record several intervalls for a specific duration
@@ -38,15 +32,19 @@ class Recorder():
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)
-                self.direction = direction  # net sicho ob des geat!!!!!!!!!!!!!!!!!!
+                self.current_direction = direction
                 self.board.start_streaming(self.handle_sample, duration)
+
+    def handle_sample_simple(self, sample):
+        """Callbackfunction appending the signals of each channel to its apropiate list"""
+        for i, channel in enumerate(sample):
+            self.signal_simple.channels[i].append(channel)
 
     def handle_sample(self, sample):
         """Callbackfunction appending the signals of each channel, the direction and time to there apropiate lists"""
-        for i, channel in enumerate(sample):
-            self.signal.channels[i].append(channel)
+        self.handle_sample_simple(sample)
         # Append the direction to its list
-        self.signal.direction.append(self.direction)
+        self.signal.direction.append(self.current_direction)
 
 
 class SignalSimple():
@@ -59,14 +57,11 @@ class SignalSimple():
             self.channels.append([])
 
 
-class Signal():
+class Signal(SignalSimple):
     """Stores the Signal of each channel and the direction that the eye is pointing at a specific time"""
 
     def __init__(self, channels_amount):
-        # Create list containing a list (=Signal) for each channel
-        self.channels = []
-        for _ in range(channels_amount):
-            self.channels.append([])
+        super(channels_amount)
 
         self.direction = []
         self.time = []
