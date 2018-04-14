@@ -1,9 +1,19 @@
+"""
+Module to record data from the 'OpenBCI Ganglion' board.
+The data is returned as a 'Signal' object, containing
+    - a list containing
+        - lists for the voltage over time of each channel
+    - a list containing the time when each sample was captured
+
+When calling 'start_recording_advanced' the object additionally contains
+    - a list of the direction in which the eye was looking at the time the sample was captured
+"""
 import time
 
 from open_bci_ganglion_simulator import OpenBCIBoard
 
 class Recorder():
-    """Records and saves data"""
+    """Recorder object"""
 
     def __init__(self, channels_amount=4):
         self.channels_amount = channels_amount
@@ -31,7 +41,7 @@ class Recorder():
         The duration the the time the eye persists in one direction
         Direction "0" = looking strait ahead
         """
-        self.signal = SignalAdvanced(self.channels_amount)
+        self.signal = Signal(self.channels_amount)
         self.start_recording_time = time.perf_counter()
         directions = ['0', 'up', '0', 'down', '0', 'left', '0', 'right']
         for _ in range(0, iterations):
@@ -62,18 +72,12 @@ class Signal():
     """Stores the Signal (Voltage and time) of each channel"""
 
     def __init__(self, channels_amount):
-        # Create list containing a list (=Signal) for each channel
+        # List containing a list for the samples of each channel
         self.channels = []
         for _ in range(channels_amount):
             self.channels.append([])
 
+        # List containing the time when each sample was captured
         self.time = []
-
-
-class SignalAdvanced(Signal):
-    """Stores the Signal of each channel and the direction that the eye is pointing at a specific time"""
-
-    def __init__(self, channels_amount):
-        super(channels_amount)
-
-        self.direction = []
+        # List (for advanced recording) containing the direction in which the eye was looking at the time the sample was captured
+        self.direction = None
