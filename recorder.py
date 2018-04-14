@@ -11,12 +11,14 @@ class Recorder():
         self.channels_amount = channels_amount
 
         self.signal = None
+        self.start_recording_time = None
         self.current_direction = None
 
 
     def start_recording(self):
         """Record as long as "Ctrl-C" is not pressed"""
         self.signal = Signal(self.channels_amount)
+        self.start_recording_time = time.perf_counter()
         try:
             self.board.start_streaming(self.handle_sample)
         except KeyboardInterrupt:
@@ -30,6 +32,7 @@ class Recorder():
         Direction "0" = looking strait ahead
         """
         self.signal = SignalAdvanced(self.channels_amount)
+        self.start_recording_time = time.perf_counter()
         directions = ['0', 'up', '0', 'down', '0', 'left', '0', 'right']
         for _ in range(0, iterations):
             for direction in directions:
@@ -38,12 +41,13 @@ class Recorder():
                 self.board.start_streaming(self.handle_sample_advanced, duration)
 
     def handle_sample(self, sample):
-        """Callbackfunction appending the signals of each channel to its apropiate list"""
+        """Callbackfunction appending the voltage of each channel (sample) and the time to the 'Signal'-object"""
+        self.signal.time.append(time.perf_counter() - self.start_recording_time)
         for i in range(self.channels_amount):
             self.signal.channels[i].append(sample[i])
 
     def handle_sample_advanced(self, sample):
-        """Callbackfunction appending the signals of each channel, the direction and time to there apropiate lists"""
+        """Callbackfunction appending the voltage of each channel (sample), the time and the direction to the 'Signal'-object"""
         self.handle_sample(sample)
         # Append the direction to its list
         self.signal.direction.append(self.current_direction)
@@ -55,13 +59,15 @@ class Recorder():
 
 
 class Signal():
-    """Stores the Signal of each channel"""
+    """Stores the Signal (Voltage and time) of each channel"""
 
     def __init__(self, channels_amount):
         # Create list containing a list (=Signal) for each channel
         self.channels = []
         for _ in range(channels_amount):
             self.channels.append([])
+
+        self.time = []
 
 
 class SignalAdvanced(Signal):
@@ -71,4 +77,3 @@ class SignalAdvanced(Signal):
         super(channels_amount)
 
         self.direction = []
-        self.time = []
