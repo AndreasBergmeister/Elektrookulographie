@@ -1,19 +1,22 @@
 """
 Module to record data from the 'OpenBCI Ganglion' board.
-The data is returned as a 'Signal' object, containing
-    - a list containing
-        - lists for the voltage over time of each channel
-    - a list containing the time when each sample was captured
-
-When calling 'start_recording_advanced' the object additionally contains
-    - a list of the direction in which the eye was looking at the time the sample was captured
 """
 import time
 
 from open_bci_ganglion_simulator import OpenBCIBoard
 
 class Recorder():
-    """Recorder object"""
+    """
+    Recorder object
+    
+    The data is returned as a 'Signal' object, containing
+    - a list containing
+        - lists for the voltage over time of each channel
+    - a list containing the time when each sample was captured
+
+    When calling 'start_recording_advanced' the object additionally contains
+        - a list of the direction in which the eye was looking at the time the sample was captured
+    """
 
     def __init__(self, channels_amount=4):
         self.channels_amount = channels_amount
