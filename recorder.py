@@ -43,7 +43,7 @@ class Recorder():
         """
         self.signal = Signal(self.channels_amount)
         self.start_recording_time = time.perf_counter()
-        directions = ['0', 'up', '0', 'down', '0', 'left', '0', 'right']
+        directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left']
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)
@@ -66,6 +66,11 @@ class Recorder():
     def get_signal(self):
         """Returns the created Signal object"""
         return self.signal
+
+
+    def save_as_csv(self):
+        """Saves the signal as csv file"""
+
 
 
 class Signal():

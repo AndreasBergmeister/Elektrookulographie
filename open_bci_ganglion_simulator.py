@@ -8,7 +8,7 @@ class OpenBCIBoard():
     def start_streaming(self, callback, duration=1):
         self.streaming = True
         timeout = time.time() + duration * 60
-        signal = [1, 1, 1, 1]
+        signal = [1, 2, 3, 4]
         while time.time() < timeout and self.streaming:
             callback(signal)
             # Pause for 1 / frequency
