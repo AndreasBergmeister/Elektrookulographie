@@ -46,7 +46,7 @@ class Recorder():
         """
         self.signal = Signal(self.channels_amount)
         self.start_recording_time = time.perf_counter()
-        directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left']
+        directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0']
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)

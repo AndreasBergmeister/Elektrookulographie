@@ -10,4 +10,4 @@ class Signal():
         # List containing the time when each sample was captured
         self.time = []
         # List (for advanced recording) containing the direction in which the eye was looking at the time the sample was captured
-        self.direction = []
+        self.directions = []

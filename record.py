@@ -35,7 +35,7 @@ def record_advanced(duration, iterations, channels_amount=4):
         signal = Signal(channels_amount)
         # Add list attribute to signal
         start_recording_time = time.perf_counter()
-        directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left']
+        directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0']
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)
@@ -46,7 +46,7 @@ def record_advanced(duration, iterations, channels_amount=4):
                     for i in range(channels_amount):
                         signal.channels[i].append(sample[i])
                     # Append the direction to its list
-                    signal.direction.append(direction)
+                    signal.directions.append(direction)
 
                 board.start_streaming(handle_sample, duration)
 
