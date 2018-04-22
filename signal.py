@@ -8,6 +8,6 @@ class Signal():
             self.channels.append([])
 
         # List containing the time when each sample was captured
-        self.time = []
+        self.times = []
         # List (for advanced recording) containing the direction in which the eye was looking at the time the sample was captured
         self.directions = []

@@ -12,7 +12,7 @@ def record(channels_amount=4):
 
     def handle_sample(sample):
         """Callbackfunction appending the voltage of each channel (sample) and the time to the 'Signal'-object"""
-        signal.time.append(time.perf_counter() - start_recording_time)
+        signal.times.append(time.perf_counter() - start_recording_time)
         for i in range(channels_amount):
             signal.channels[i].append(sample[i])
 
@@ -25,9 +25,9 @@ def record(channels_amount=4):
 
 def record_advanced(duration, iterations, channels_amount=4):
         """ 
-        Record several intervalls for a specific duration
-        An intervall is the user's eye moving to all four directions 
-        The duration the the time the eye persists in one direction
+        Record several intervalls for a specific duration.
+        An intervall is the user's eye moving to all four directions.
+        The duration the the time the eye persists in one direction.
                                 
         Direction "0" = looking strait ahead
         """
@@ -42,7 +42,7 @@ def record_advanced(duration, iterations, channels_amount=4):
 
                 def handle_sample(sample):
                     """Callbackfunction appending the voltage of each channel (sample), the time and the direction to the 'Signal'-object"""
-                    signal.time.append(time.perf_counter() - start_recording_time)
+                    signal.times.append(time.perf_counter() - start_recording_time)
                     for i in range(channels_amount):
                         signal.channels[i].append(sample[i])
                     # Append the direction to its list

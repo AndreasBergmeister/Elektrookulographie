@@ -29,3 +29,9 @@ print(saved_data_filename)
 
 with open(saved_data_filename, 'w') as file:
     json.dump('Hallo', file)
+
+
+def save_signal_pickle():
+    """Save signal object to a pickle file"""
+    with open(directory + filename + '.p') as file:
+        pickle.dump(signal, file)
