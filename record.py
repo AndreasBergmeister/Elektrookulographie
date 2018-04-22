@@ -1,22 +1,21 @@
 import time
+import json
 
+# from open_bci_ganglion import OpenBCIBoard
 from open_bci_ganglion_simulator import OpenBCIBoard
-# from sig import Sig
-
 
 def record(channels_amount=4):
     """Record as long as "Ctrl-C" is not pressed"""
     board = OpenBCIBoard()
-    # signal = Sig(channels_amount)
     signal = signal_dictionary(channels_amount)
-
+    print('Start streaming')
     start_recording_time = time.perf_counter()
 
     def handle_sample(sample):
         """Callbackfunction appending the voltage of each channel (sample) and the time to the 'Signal'-object"""
         signal['times'].append(time.perf_counter() - start_recording_time)
         for i in range(channels_amount):
-            signal['channels'][i].append(sample[i])
+            signal['channels'][i].append(sample.channel_data[i])
 
     try:
         board.start_streaming(handle_sample)
@@ -35,9 +34,9 @@ def record_advanced(duration, iterations, channels_amount=4):
         """
         board = OpenBCIBoard()
         signal = signal_dictionary(channels_amount)
-        # Add list attribute to signal
-        start_recording_time = time.perf_counter()
         directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0']
+        print('Start streaming')      
+        start_recording_time = time.perf_counter()
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)
@@ -46,7 +45,7 @@ def record_advanced(duration, iterations, channels_amount=4):
                     """Callbackfunction appending the voltage of each channel (sample), the time and the direction to the 'Signal'-object"""
                     signal['times'].append(time.perf_counter() - start_recording_time)
                     for i in range(channels_amount):
-                        signal['channels'][i].append(sample[i])
+                        signal['channels'][i].append(sample.channel_data[i])
                     # Append the direction to its list
                     signal['directions'].append(direction)
 
