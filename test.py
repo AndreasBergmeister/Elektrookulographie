@@ -1,10 +1,10 @@
 import record
 import plot
+import file
 
-signal = record.record_advanced(0.5,1)
+# signal = record.record_advanced(0.5,1)
 # signal = record.record()
 
-print('signal recorded')
 
-import plot
-plot.plot_channels(signal)
+# file.save_signal(signal)
+plot.plot_channels(file.get_signal('records/20180422-160541_Test_.txt'))
