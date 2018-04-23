@@ -1,8 +1,8 @@
 import time
 import json
 
-# from open_bci_ganglion import OpenBCIBoard
-from open_bci_ganglion_simulator import OpenBCIBoard
+from open_bci_ganglion import OpenBCIBoard
+# from open_bci_ganglion_simulator import OpenBCIBoard
 
 def record(channels_amount=4):
     """Record as long as "Ctrl-C" is not pressed"""
