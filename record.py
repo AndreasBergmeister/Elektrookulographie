@@ -37,6 +37,7 @@ def record_advanced(duration, iterations, channels_amount=4):
         directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0']
         print('Start streaming')      
         start_recording_time = time.perf_counter()
+        board.start_streaming(handle_sample, duration * iterations)        
         for _ in range(0, iterations):
             for direction in directions:
                 print(direction)
