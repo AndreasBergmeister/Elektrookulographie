@@ -14,6 +14,7 @@ board.start(handle_sample)
 TODO: support impedance
 TODO: reset board with 'v'?
 """
+import asyncio
 import struct
 import time
 import timeit
@@ -241,7 +242,7 @@ class OpenBCIBoard(object):
     """Might not be used depending on the mode."""
     return  self.imp_channels_per_sample
 
-  def start_streaming(self, callback, lapse=-1):
+  async def start_streaming(self, callback, lapse=-1):
     """
     Start handling streaming data from the board. Call a provided callback
     for every single sample that is processed
@@ -276,9 +277,9 @@ class OpenBCIBoard(object):
             call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
-        self.stop();
+        self.stop()
       if self.log:
-        self.log_packet_count = self.log_packet_count + 1;
+        self.log_packet_count = self.log_packet_count + 1
   
       # Checking connection -- timeout and packets dropped
       self.check_connection()
