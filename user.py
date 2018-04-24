@@ -1,15 +1,19 @@
 import record
+import plot
 import file
 
 print('Initializing')
 
 # Configure record
-duration = 3
+duration = 0.5
 iterations = 1
-channels = 1
-signal = record.record_advanced(duration, iterations, channels)
+channels = 4
+# signal = record.record_advanced(duration, iterations, channels)
+signal = record.record()
 
 print('Finished recording')
 
 # Save Signal
 file.save_signal(signal)
+
+# Plot Signal

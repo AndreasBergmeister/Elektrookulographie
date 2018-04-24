@@ -67,6 +67,7 @@ class OpenBCIBoard(object):
     self.log = log # print_incoming_text needs log
     self.aux = aux
     self.streaming = False
+    self.pause = False
     self.timeout = timeout
     self.max_packets_to_skip = max_packets_to_skip
     self.scaling_output = scaled_output
@@ -247,11 +248,14 @@ class OpenBCIBoard(object):
     for every single sample that is processed
 
     Args:
-      callback: A callback function -- or a list of functions -- that will receive a single argument of the
+      callback: A callback function -- or a list of functions -- that will receive astart_st single argument of the
           OpenBCISample object captured.
     """
     if not self.streaming:
       self.init_streaming()
+
+    if self.pause:
+      self.pause = False
 
     start_time = timeit.default_timer()
 
@@ -259,7 +263,7 @@ class OpenBCIBoard(object):
     if not isinstance(callback, list):
       callback = [callback]
 
-    while self.streaming:
+    while self.streaming and not self.pause:
       # should the board get disconnected and we could not wait for notification anymore, a reco should be attempted through timeout mechanism
       try:
         # at most we will get one sample per packet
@@ -276,7 +280,10 @@ class OpenBCIBoard(object):
             call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
-        self.stop()
+        # Instead of stoping just pause streaming (actually continue it)
+        # self.stop()
+        self.pause = True
+      
       if self.log:
         self.log_packet_count = self.log_packet_count + 1
   

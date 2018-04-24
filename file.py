@@ -3,11 +3,15 @@ import time
 import os
 
 def save_signal(signal):
-    """Saves the signal as a json-string to a file"""
+    """
+    Saves the signal as a json-string to a file
+    Returns the filename
+    """
     filename = get_filename()
     with open(filename, 'w') as file:
         json.dump(signal, file)
     print('Saved signal to: ' + filename)
+    return filename
 
 def get_signal(filename):
     with open(filename) as file:
@@ -20,7 +24,7 @@ def get_filename():
     name = input('Input filename: ')
     if(name):
         filename += '_' + name + '_'
-    filename += '.txt'
+    filename += '.json'
     return os.path.join(directory, filename)
 
 def print_signal(signal):
