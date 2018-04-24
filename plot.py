@@ -15,9 +15,7 @@ def plot_channels(signal):
         plt.subplot(len(channels), 1, i)
         
         # Get the time-voltage graph for each channel
-        graph = {'x': [], 'y': []}
-        graph['x'] = times
-        graph['y'] = channel 
+        points = [{'time': time, 'voltage': voltage} for time, voltage in zip(times, channel)]
 
         # Format the graph if the signal is 'advanced' (directions were recorded)
         if directions:
@@ -25,16 +23,16 @@ def plot_channels(signal):
             colors = {'0': 'b', 'up': 'r', 'down': 'g', 'right': 'c', 'left': 'm'}
             # Split the graph for each direction into a section
             graph_section = {'x': [], 'y': []}
-            for j, (value, time, direction) in enumerate(zip(graph, times, directions)):
-                graph_section['x'].append(time)
-                graph_section['y'].append(value)
+            for j, (point, direction) in enumerate(zip(points, directions)):
+                graph_section['x'].append(point['time'])
+                graph_section['y'].append(point['voltage'])
                 # Plot graph section if the last value is reached or if the direction changes
-                if j == len(directions) or directions[j] == directions[j + 1]:
+                if j == len(directions) - 1 or directions[j] != directions[j + 1]:
                     plt.plot(graph_section['x'], graph_section ['y'], colors[direction])
                     # Empty the graph lists
                     graph_section = {'x': [], 'y': []}
         else:
-            plt.plot(graph['x'], graph['y'])
+            plt.plot(times, channel)
 
         # Format the subplot
         plt.xlabel('t (s)')
