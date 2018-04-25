@@ -591,8 +591,8 @@ class GanglionDelegate(DefaultDelegate):
     else:
       self.packets_dropped = packet_id + 101 - self.last_id - 1
     self.last_id = packet_id
-    if self.packets_dropped > 0:
-      print("Warning: dropped " + str(self.packets_dropped) + " packets.")
+    # if self.packets_dropped > 0:
+    #   print("Warning: dropped " + str(self.packets_dropped) + " packets.")
 
   def getSamples(self):
     """ Retrieve and remove from buffer last samples. """
