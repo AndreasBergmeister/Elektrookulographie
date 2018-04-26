@@ -18,6 +18,7 @@ def record(args):
     print('Saved signal to: ' + filename)
 
 def plot(args):
+    print(args.name)
     signal = file.get_signal(args.name)
     print('Signal loaded from file')
     p.plot_channels(signal)
