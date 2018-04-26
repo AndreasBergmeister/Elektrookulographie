@@ -1,6 +1,6 @@
-import record
-import plot
-import file
+# import record
+# import plot
+# import file
 
 # signal = record.record_advanced(0.5,1)
 # signal = record.record()
@@ -8,3 +8,7 @@ import file
 
 # file.print_signal(signal)
 # plot.plot_channels(file.get_signal('records/20180422-160541_Test_.txt'))
+
+tesl = [2, 3, 4, 5] * 1.5
+
+print(tesl)
