@@ -1,7 +1,6 @@
 import argparse
 
-# import record as r
-import record_1 as r
+import record as r
 import plot as p
 import file
 

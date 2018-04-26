@@ -65,7 +65,9 @@ def record_advanced(duration, iterations, channels_amount=4):
 
 
     print('Start streaming')
-    board.start_streaming(handle_sample)    
+    board.start_streaming(handle_sample)
+    print('Stopped streaming')
+    return signal       
 
 
 def signal_dictionary(channels_amount):

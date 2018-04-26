@@ -8,7 +8,3 @@
 
 # file.print_signal(signal)
 # plot.plot_channels(file.get_signal('records/20180422-160541_Test_.txt'))
-
-tesl = [2, 3, 4, 5] * 1.5
-
-print(tesl)
