@@ -57,13 +57,6 @@ def record_advanced(duration, iterations, channels_amount=4):
    
     return signal
 
-    async def recording():
-        for _ in range(0, iterations):
-            for direction in directions:
-                print(direction)
-                await asyncio.sleep(duration)
-                # Fill direction list with the current direction
-                signal['directions'] = [direction for _ in range(len(signal['directions'], len(signal['times'])))]
 
 def signal_dictionary(channels_amount):
     signal = {

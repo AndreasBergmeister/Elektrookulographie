@@ -15,8 +15,7 @@ def record(args):
 
     # Save Signal to file
     filename = file.save_signal(signal, args.name)
-    print('Saved signal to: ' + filename)    
-
+    print('Saved signal to: ' + filename)
 
 def plot(args):
     signal = file.get_signal(args.name)
