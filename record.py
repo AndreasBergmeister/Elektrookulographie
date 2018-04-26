@@ -2,8 +2,8 @@ import time
 import json
 import asyncio
 
-# from open_bci_ganglion import OpenBCIBoard
-from open_bci_ganglion_simulator import OpenBCIBoard
+from open_bci_ganglion import OpenBCIBoard
+# from open_bci_ganglion_simulator import OpenBCIBoard
 
 def record(channels_amount=4):
     """Record as long as "Ctrl-C" is not pressed"""
@@ -29,40 +29,37 @@ def record_advanced(duration, iterations, channels_amount=4):
     board = OpenBCIBoard()
     signal = signal_dictionary(channels_amount)
     directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0'] * iterations
+    direction_changes = len(directions)
     # Time when change direction 
-    direction_change_time = [i*duration for i in len(directions)]
+    direction_change_times = [i*duration for i in range(direction_changes)]
     # Current time
     start_recording_time = time.perf_counter()
-    finish_recording_time = start_recording_time + len(directions) * duration
+    recording_duration = len(directions) * duration
 
-    def handle_sample(sample):
-        time_now = time.perf_counter() - start_recording_time
+    def handle_sample(sample):      
+        recording_time = time.perf_counter() - start_recording_time
         # Finish recording if time is over
-        if time_now > finish_recording_time:
+        if recording_time > recording_duration:
             board.stop()
             return
         
         # Append time to its list
-        signal['times'].append(time_now)
+        signal['times'].append(recording_time)
 
         # Append each channels value to its list
         for i in range(channels_amount):
             signal['channels'][i].append(sample.channel_data[i])
 
         # Calculate the current direction by time
-        direction = None        
-        for i in direction_change_time:
-            if i == len(direction_change_time) -1 or (time_now >= direction_change_time[i] and time_now < direction_change_time[i+1]):
-                direction = directions[i]
+        for i, direction in enumerate(directions):
+            if i == len(direction_change_times) -1 or (recording_time >= direction_change_times[i] and recording_time < direction_change_times[i+1]):
+                # Print direction if it's the first one or if it changed
+                if not signal['directions'] or direction != signal['directions'][-1]:
+                    print(direction)
+
+                # Append the direction to its list
+                signal['directions'].append(direction)
                 break
-        
-        # Print direction if it changed
-        if direction is not direction[-1]:
-            print(direction)
-
-        # Append the direction to its list
-        signal['directions'].append(direction)
-
 
     print('Start streaming')
     board.start_streaming(handle_sample)
