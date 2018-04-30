@@ -41,5 +41,4 @@ def plot_channels(signal):
         plt.title('Channel ' + str(i))
         # plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.8, wspace=0.35)
         plt.subplots_adjust(hspace=0.8)
-        break
     plt.show()
