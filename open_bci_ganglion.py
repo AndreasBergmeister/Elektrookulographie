@@ -67,7 +67,6 @@ class OpenBCIBoard(object):
     self.log = log # print_incoming_text needs log
     self.aux = aux
     self.streaming = False
-    self.pause = False
     self.timeout = timeout
     self.max_packets_to_skip = max_packets_to_skip
     self.scaling_output = scaled_output
@@ -254,16 +253,13 @@ class OpenBCIBoard(object):
     if not self.streaming:
       self.init_streaming()
 
-    if self.pause:
-      self.pause = False
-
     start_time = timeit.default_timer()
 
     # Enclose callback funtion in a list if it comes alone
     if not isinstance(callback, list):
       callback = [callback]
 
-    while self.streaming and not self.pause:
+    while self.streaming:
       # should the board get disconnected and we could not wait for notification anymore, a reco should be attempted through timeout mechanism
       try:
         # at most we will get one sample per packet
@@ -280,9 +276,7 @@ class OpenBCIBoard(object):
             call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
-        # Instead of stoping just pause streaming (actually continue it)
-        # self.stop()
-        self.pause = True
+        self.stop()
       
       if self.log:
         self.log_packet_count = self.log_packet_count + 1
@@ -412,11 +406,13 @@ class OpenBCIBoard(object):
 
 class OpenBCISample(object):
   """Object encapulsating a single sample from the OpenBCI board."""
-  def __init__(self, packet_id, channel_data, aux_data, imp_data):
+  def __init__(self, packet_id, channel_data, aux_data, imp_data, capturing_time):
     self.id = packet_id
     self.channel_data = channel_data
     self.aux_data = aux_data
     self.imp_data = imp_data
+    # Capturing time of sample
+    self.capturing_time = capturing_time
 
 class GanglionDelegate(DefaultDelegate):
   """ Called by bluepy (handling BLE connection) when new data arrive, parses samples. """
@@ -576,7 +572,7 @@ class GanglionDelegate(DefaultDelegate):
     if self.scaling_output:
       chan_data = list(np.array(chan_data) * scale_fac_uVolts_per_count)
       aux_data = list(np.array(aux_data) * scale_fac_accel_G_per_count)
-    sample = OpenBCISample(sample_id, chan_data, aux_data, imp_data)
+    sample = OpenBCISample(sample_id, chan_data, aux_data, imp_data, time.perf_counter())
     self.samples.append(sample)
     
   def updatePacketsCount(self, packet_id):

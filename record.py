@@ -1,6 +1,4 @@
 import time
-import json
-import asyncio
 
 from open_bci_ganglion import OpenBCIBoard
 # from open_bci_ganglion_simulator import OpenBCIBoard
@@ -11,10 +9,19 @@ def record(channels_amount=4):
     signal = signal_dictionary(channels_amount)
     print('Start streaming')
     start_recording_time = time.perf_counter()
+    start_recording_time = 0
 
     def handle_sample(sample):
         """Callbackfunction appending the voltage of each channel (sample) and the time to the 'Signal'-object"""
-        signal['times'].append(time.perf_counter() - start_recording_time)
+        # Set start_recording_time        
+        if not signal['times']:
+            nonlocal start_recording_time
+            start_recording_time = sample.capturing_time
+        
+        # Append time to it's list
+        signal['times'].append(sample.capturing_time - start_recording_time)
+        
+        # Append each channels value to its list
         for i in range(channels_amount):
             signal['channels'][i].append(sample.channel_data[i])
 
@@ -33,11 +40,18 @@ def record_advanced(duration, iterations, channels_amount=4):
     # Time when change direction 
     direction_change_times = [i*duration for i in range(direction_changes)]
     # Current time
-    start_recording_time = time.perf_counter()
+    # start_recording_time = time.perf_counter()
+    start_recording_time = 0
     recording_duration = len(directions) * duration
 
-    def handle_sample(sample):      
-        recording_time = time.perf_counter() - start_recording_time
+    def handle_sample(sample):
+        # Set start_recording_time        
+        if not signal['times']:
+            nonlocal start_recording_time
+            start_recording_time = sample.capturing_time
+
+        recording_time = sample.capturing_time - start_recording_time
+        
         # Finish recording if time is over
         if recording_time > recording_duration:
             board.stop()
@@ -64,7 +78,7 @@ def record_advanced(duration, iterations, channels_amount=4):
     print('Start streaming')
     board.start_streaming(handle_sample)
     print('Stopped streaming')
-    return signal       
+    return signal
 
 
 def signal_dictionary(channels_amount):
