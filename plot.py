@@ -1,6 +1,8 @@
+"""Module for formated plotting the recorded signal"""
+
 import matplotlib.pyplot as plt
 
-def plot_channels(signal):
+def plot(signal):
     """Plot the graph of the signal for each channel"""
     # Extracting dictionary
     channels = signal['channels']

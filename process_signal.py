@@ -1,3 +1,5 @@
+"""Module containing several functions for processing the signal"""
+
 from scipy.interpolate import interp1d
 from scipy.signal import butter, lfilter
 import numpy as np

@@ -1,59 +1,42 @@
-from statistics import mean
-from scipy.signal import argrelextrema
+"""Module for detecting blinks in a recorded signal"""
+
 from matplotlib import pyplot as plt
 
-from detect_peaks import detect_peaks
 import process_signal
 import file
 
-signal = file.get_signal('20180429-212736_Maria_gd_.json')
+def detect(signal):
+    x = signal['times']
+    y = signal['channels'][0]
 
-FREQUENCY = 100
-
-# Restructure sample
-samples = []
-for value, time in zip(signal['channels'][0], signal['times']):
-    sample = {'value': value, 'time': time}
-    samples.append(sample)
-
-# Split into epochs
-epoch_length = 1 # in seconds
-epochs = []
-epoch = []
-last_time = 0
-for sample in samples:
-    # Append sample to current epoch if epoch is shorter than epoch length
-    if sample['time'] < epoch_length + last_time:
-        epoch.append(sample)
-    # Else append current epoch to epochs-list and clear it
-    else:
-        epochs.append(epoch)
-        epoch = []
-        last_time = sample['time']
-
-# Process epochs
-counter = 0
-for epoch in epochs:
-    # Get signal
-    x = []
-    y = []
-    for sample in epoch:
-        x.append(sample['time'])
-        y.append(sample['value'])        
-    # Resample epoch
+    # Resample Signal
+    FREQUENCY = 100
     x, y = process_signal.resample(x, y, FREQUENCY)
 
+    # Filter Signal
+    LOWCUT = 2
+    HIGHCUT = 5
+    y_filtered = process_signal.butter_bandpass_filter(y, LOWCUT, HIGHCUT, FREQUENCY)
+
     # Detect peaks
-    a = mean(y)
-    mph = mean(y) + abs(mean(y)) # Minimum peak height
-    mpd = FREQUENCY * 0.2 # Minimum peak distance (in number of data)
-    peaks_indexes = detect_peaks(y, mph, mpd).tolist()
+    def detect_peaks(y):
+        """Get indices all peaks"""
+        # Peak: value has to be greater than previous and following value
+        peaks = [i for i in range(1, len(y) - 1) if y[i] > y[i-1] and y[i] > y[i+1]]
+        
+        # Get minimum peak height
+        mph = max(y) * 0.75 # Minimum peak hight
+        
+        # Get peaks greater than minimum-peak-height
+        peaks = [peak for peak in peaks if y[peak] >= mph]
+        return peaks
 
-    # Plot peaks
+    peaks_indexes = detect_peaks(y_filtered)
+    print('Detected blinks: ' + str((len(peaks_indexes))))
+
+    # Plot filtered Signal with peaks
     for peak_index in peaks_indexes:
-        plt.plot(x[peak_index], y[peak_index], 'bo')
-    
-    # Plot epoch
-    plt.plot(x ,y)
+        plt.plot(x[peak_index], y_filtered[peak_index], 'ro')
 
-plt.show()
+    plt.plot(x, y_filtered, color='blue')
+    plt.show()

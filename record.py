@@ -1,18 +1,17 @@
+"""Module for simple and advanced streaming and recording from the Ganglion board"""
+
 import time
 
 from open_bci_ganglion import OpenBCIBoard
-# from open_bci_ganglion_simulator import OpenBCIBoard
 
 def record(channels_amount=4):
     """Record as long as "Ctrl-C" is not pressed"""
     board = OpenBCIBoard()
     signal = signal_dictionary(channels_amount)
-    print('Start streaming')
-    start_recording_time = time.perf_counter()
     start_recording_time = 0
 
     def handle_sample(sample):
-        """Callbackfunction appending the voltage of each channel (sample) and the time to the 'Signal'-object"""
+        """Callbackfunction appending the voltage of each channel (sample) and the time to the signal-dictionary"""
         # Set start_recording_time        
         if not signal['times']:
             nonlocal start_recording_time
@@ -25,26 +24,32 @@ def record(channels_amount=4):
         for i in range(channels_amount):
             signal['channels'][i].append(sample.channel_data[i])
 
+    # Start streaming
+    print('Start streaming')
     try:
         board.start_streaming(handle_sample)
     except KeyboardInterrupt:
+        # Stop streaming
         board.stop()
+        print('Stopped streaming')
         return signal
 
 
 def record_advanced(duration, iterations, channels_amount=4):
+    """
+    The user is shown the direction in which he should look.
+    The signal is recorded with the direction in which the user is looking at a specific time.
+    """
     board = OpenBCIBoard()
     signal = signal_dictionary(channels_amount)
     directions = ['0', 'up', '0', 'down', '0', 'right', '0', 'left', '0'] * iterations
     direction_changes = len(directions)
-    # Time when change direction 
     direction_change_times = [i*duration for i in range(direction_changes)]
-    # Current time
-    # start_recording_time = time.perf_counter()
+    recording_duration = len(directions) * duration    
     start_recording_time = 0
-    recording_duration = len(directions) * duration
 
     def handle_sample(sample):
+        """Callbackfunction appending the voltage of each channel (sample), the time and the current direction to the signal-dictionary"""
         # Set start_recording_time        
         if not signal['times']:
             nonlocal start_recording_time
@@ -75,6 +80,7 @@ def record_advanced(duration, iterations, channels_amount=4):
                 signal['directions'].append(direction)
                 break
 
+    # Start streaming
     print('Start streaming')
     board.start_streaming(handle_sample)
     print('Stopped streaming')

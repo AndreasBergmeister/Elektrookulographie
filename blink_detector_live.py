@@ -1,41 +1,71 @@
-from statistics import mean
+"""Module for detecting blinks in realtime from the stream from the Ganglion board"""
+
+import time
 
 from open_bci_ganglion import OpenBCIBoard
 import process_signal
 
-board = OpenBCIBoard()
+def detect_live():
+    board = OpenBCIBoard()
 
-minimum_blink_distance = 2
-last_samples_amount = 1000
+    # Buffer
+    BUFFER_SIZE = 500
+    channel = []
+    times = []
 
-last_blink_time = 0
-last_samples = []
-blink_value = 0
-blink_counter = 0
-def handle_sample(sample):
-    global last_blink_time
-    global blink_counter
-    global blink_value
-    print(sample.channel_data[0])
-    
-    if sample.channel_data[0] > blink_value and sample.capturing_time > last_blink_time + minimum_blink_distance:
-        blink_counter += 1
-        last_blink_time = sample.capturing_time
-        print('Blink ' + str(blink_counter))
+    # Start recording time (to calculate blink frequency)
+    start_recording_time = time.perf_counter()
 
-    last_samples.append(sample.channel_data[0])
-    # Limit list to fixed size
-    if len(last_samples) > last_samples_amount:
-        last_samples.pop(0)
+    # Amount of detected blinks
+    blinks_amount = 0
 
-    # Calculate new blink value
-    last_samples_mean = mean(last_samples)
-    blink_value = last_samples_mean + 2 * abs(last_samples_mean)
+    def handle_sample(sample):
+        # Append sample to buffer
+        channel.append(sample.sample.channel_data[0])
+        times.append(sample.capturing_time)
+        
+        # Detect blinks in buffer if it contains more samples than BUFFER_SIZE
+        if len(channel) >= BUFFER_SIZE:
+            # Resample Signal
+            FREQUENCY = 100 # Hz
+            x, y = process_signal.resample(times, channel, FREQUENCY)
 
+            # Filter Signal
+            LOWCUT = 2
+            HIGHCUT = 5
+            y_filtered = process_signal.butter_bandpass_filter(y, LOWCUT, HIGHCUT, FREQUENCY)
+            
+            # Detect peaks
+            def detect_peaks(y):
+                """Get indices all peaks"""
+                # Peak: value has to be greater than previous and following value
+                peaks = [i for i in range(1, len(y) - 1) if y[i] > y[i-1] and y[i] > y[i+1]]
+                
+                # Get minimum peak height
+                mph = max(y) * 0.75 # Minimum peak hight
+                
+                # Get peaks greater than minimum-peak-height
+                peaks = [peak for peak in peaks if y[peak] >= mph]
+                return peaks
 
+            blinks_detected = len(detect_peaks(y_filtered))
+            if blinks_detected > 0:
+                global blinks_amount
+                blinks_amount += blinks_detected
+                dt = (time.perf_counter() - start_recording_time) / 60 # Minutes since start
+                blink_frequency = blinks_amount / dt # Blinks per minute
 
-print('start testing')
-try:
-    board.start_streaming(handle_sample)
-except KeyboardInterrupt:
-    board.stop()
+                print('Detected Blinks: ' + str(blinks_detected))
+                print('Total detected blinks: ' + str(blinks_detected))
+                print('Blink frequency:' + str(blink_frequency) + ' [Blinks per minute]')
+                
+            # Clear buffer
+            channel.clear()
+            times.clear()
+
+    # Start detecting blinks
+    print('Start detecting blinks')
+    try:
+        board.start_streaming(handle_sample)
+    except KeyboardInterrupt:
+        board.stop()
