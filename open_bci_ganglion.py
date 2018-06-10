@@ -28,7 +28,7 @@ import sys
 sys.path.insert(0,"bluepy/bluepy")
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 
-SAMPLE_RATE = 200.0  # Hz
+SAMPLE_RATE = 200.0 # Hz
 scale_fac_uVolts_per_count = 1200 / (8388607.0 * 1.5 * 51.0)
 scale_fac_accel_G_per_count = 0.000016
 
@@ -166,7 +166,7 @@ class OpenBCIBoard(object):
     scan_time = 5
     print("Scanning for 5 seconds nearby devices...")
 
-    #   From bluepy example
+    # From bluepy example
     class ScanDelegate(DefaultDelegate):
       def __init__(self):
         DefaultDelegate.__init__(self)

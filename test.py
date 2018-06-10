@@ -11,17 +11,26 @@ import numpy
 
 # file.print_signal(signal)
 # plot.plot_channels(file.get_signal('records/2018042220180429-213008_Maria_gd_.json
-signal = file.get_signal('20180429-213420_Maria_gd_blink_.json')
+FREQUENCY = 200
+
+signal = file.get_signal('20180603-232127_advanced_.json')
 
 x = signal['times']
 y = signal['channels'][0]
 
 
-xn, yn = process_signal.interpolate(x, y, 200)
+xn, yn = process_signal.resample(x, y, FREQUENCY)
 
-yn_filtered = process_signal.butter_bandpass_filter(yn, 0.5, 5, 200)
+# yn_filtered = process_signal.butter_bandpass_filter(yn, 0.01, 1, FREQUENCY)
+yn_filtered = process_signal.butter_highpass_filter(yn, 1, FREQUENCY)
 
-plt.plot(xn, yn, color='blue')
+
+
+# plt.plot(*process_signal.fft(x,y), color='red')
+# plt.plot(*process_signal.fft(xn,yn), color='green')
+
+
 plt.plot(xn, yn_filtered, color='red')
+# plt.plot(xn, yn, color='blue')
 
 plt.show()

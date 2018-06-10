@@ -14,7 +14,7 @@ signal = file.get_signal(name)
 x = signal['times']
 y = signal['channels'][0]
 
-xn, yn = process_signal.interpolate(x, y, 200)
+xn, yn = process_signal.resample(x, y, 200)
 xf, yf = process_signal.fft(xn,yn)
 plt.plot(xf, yf)
 plt.show()

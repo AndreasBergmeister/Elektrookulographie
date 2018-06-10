@@ -12,7 +12,7 @@ def plot_channels(signal):
         # Start index at 1
         i += 1
         # Create subplot
-        # plt.subplot(len(channels), 1, i)
+        plt.subplot(len(channels), 1, i)
         
         # Get the time-voltage graph for each channel
         points = [{'time': time, 'voltage': voltage} for time, voltage in zip(times, channel)]
