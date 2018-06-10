@@ -35,4 +35,3 @@ def get_signal(filename):
 def print_signal(signal):
     """Load a JSON file and print it as a string"""
     print(json.dumps(signal, indent=4))
-
