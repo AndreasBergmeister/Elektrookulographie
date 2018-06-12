@@ -21,12 +21,12 @@ def record_call(args):
 
 def plot_call(args):
     signal = file.get_signal(args.name)
-    print('signal loaded from file')
+    print('Signal loaded from file')
     plot.plot(signal)
 
 def detect_call(args):
     signal = file.get_signal(args.name)
-    print('signal loaded from file')
+    print('Signal loaded from file')
     blink_detector.detect(signal)
 
 def detect_live_call(args):

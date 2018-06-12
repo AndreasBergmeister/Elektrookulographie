@@ -29,10 +29,6 @@ def fft(y, frequency):
 
     return fft_freq, fft_values
 
-    # Plot
-    # plt.plot(fft_freq, fft_values)
-    # plt.show()
-
 def butter_bandpass_filter(data, lowcut, highcut, frequency, order=1):
     nyq = 0.5 * frequency
     low = lowcut / nyq

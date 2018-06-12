@@ -13,7 +13,8 @@ class OpenBCIBoard():
         while time.perf_counter() < timeout and self.streaming:
             callback(OpenBCISample(signal))
             # Pause for 1 / frequency
-            time.sleep(1 / 200)
+            FREQUENCY = 200
+            time.sleep(1 / FREQUENCY)
 
     def stop(self):
         self.streaming = False
@@ -21,13 +22,3 @@ class OpenBCIBoard():
 class OpenBCISample():
     def __init__(self, signal):
         self.channel_data = signal
-
-
-def test():
-    board = OpenBCIBoard()
-    start_time = time.perf_counter()
-    board.start_streaming(handle_sample)
-    print(time.perf_counter() - start_time)
-
-def handle_sample(sample):
-    print(sample)
