@@ -43,3 +43,10 @@ def butter_highpass_filter(data, highcut, frequency, order=1):
 
     b, a = butter(order, [high], btype='high')
     return lfilter(b, a, data)
+
+def butter_lowpass_filter(data, lowcut, frequency, order=1):
+    nyq = 0.5 * frequency
+    low = lowcut / nyq
+
+    b, a = butter(order, [low], btype='low')
+    return lfilter(b, a, data)

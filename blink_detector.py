@@ -37,6 +37,11 @@ def detect(signal):
     # Plot filtered Signal with peaks
     for peak_index in peaks_indexes:
         plt.plot(x[peak_index], y_filtered[peak_index], 'ro')
-
+  
     plt.plot(x, y_filtered, color='blue')
+
+    # Format the plot
+    plt.title('Blinkdetektor')
+    plt.xlabel('t (s)')
+    plt.ylabel('U (μV)')
     plt.show()
