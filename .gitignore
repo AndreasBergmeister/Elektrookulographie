@@ -1,15 +1,10 @@
 # Custom (added by me)
 
 # Code Editor Settings
-.vscode
+.vscode/
 
 # Generated Data
-records
-
-
-
-
-
+records/
 
 
 # Byte-compiled / optimized / DLL files
