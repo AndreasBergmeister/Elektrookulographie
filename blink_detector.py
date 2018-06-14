@@ -41,7 +41,7 @@ def detect(signal):
     plt.plot(x, y_filtered, color='blue')
 
     # Format the plot
-    plt.title('Blinkdetektor')
+    plt.title('Blink-Detector')
     plt.xlabel('t (s)')
     plt.ylabel('U (μV)')
     plt.show()

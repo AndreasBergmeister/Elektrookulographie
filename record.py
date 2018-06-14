@@ -11,7 +11,7 @@ def record(channels_amount=4):
     start_recording_time = 0
 
     def handle_sample(sample):
-        """Callbackfunction appending the voltage of each channel (sample) and the time to the signal-dictionary"""
+        """Callback function appending the voltage of each channel (sample) and the time to the signal-dictionary"""
         # Set start_recording_time
         if not signal['times']:
             nonlocal start_recording_time
