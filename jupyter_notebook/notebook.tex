@@ -300,7 +300,7 @@
     \section{Laden der Datei}\label{laden-der-datei}
 
 Während der Messung werden die empfangenen Daten in Listen gespeichert.
-Diese werden nach Beendung der Messung als JSON-Datei gespeichert. Um
+Diese werden nach Beendigung der Messung als JSON-Datei gespeichert. Um
 das aufgezeichnete Signal auszuwerten, wird dieses zunächst geladen. Die
 einzelnen Messwerte und die dazugehörenden Zeitwerte werden in zwei
 Listen (x, y) gespeichert.
@@ -346,12 +346,11 @@ erkennen kann, ist die Abtastrate nicht konstant.
           1.233000512002036e-05]
 \end{Verbatim}
             
-    Die Inkonstanz wird in erster Linie durch das Buffering und somit
-inkonstanten Verzögerungen bei der Übertragung oder durch Paketverluste
-bei der Übertragung verursacht. Die meisten Algorithmen zur
-Signalverarbeitung, wie beispielsweise Passfilter, benötigen jedoch ein
-Signal mit konstanter Abtastrate. Das Signal wird deshalb zunächst auf
-eine fixe Abtastrate von 100 Hz resampled.
+    Die Inkonstanz wird in erster Linie durch Paketverluste bei der
+Übertragung verursacht. Die meisten Algorithmen zur Signalverarbeitung,
+wie beispielsweise Passfilter, benötigen jedoch ein Signal mit
+konstanter Abtastrate. Das Signal wird deshalb zunächst auf eine fixe
+Abtastrate von 100 Hz resampled.
 
     \begin{Verbatim}[commandchars=\\\{\}]
 {\color{incolor}In [{\color{incolor}15}]:} \PY{k}{def} \PY{n+nf}{resample}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{frequency}\PY{p}{)}\PY{p}{:}
@@ -361,7 +360,9 @@ eine fixe Abtastrate von 100 Hz resampled.
              \PY{n}{period\PYZus{}length} \PY{o}{=} \PY{l+m+mi}{1} \PY{o}{/} \PY{n}{frequency}
              \PY{c+c1}{\PYZsh{} Create list with x\PYZhy{}values (time values) for the given frequency}
              \PY{c+c1}{\PYZsh{} First value has to be greater or equal the first value of the input}
-             \PY{n}{x\PYZus{}new} \PY{o}{=} \PY{p}{[}\PY{n}{period\PYZus{}length} \PY{o}{*} \PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{samples\PYZus{}amount}\PY{p}{)} \PY{k}{if} \PY{n}{period\PYZus{}length} \PY{o}{*} \PY{n}{i} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
+             \PY{n}{x\PYZus{}new} \PY{o}{=} \PY{p}{[}\PY{n}{period\PYZus{}length} \PY{o}{*} \PY{n}{i} 
+                      \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{samples\PYZus{}amount}\PY{p}{)}
+                      \PY{k}{if} \PY{n}{period\PYZus{}length} \PY{o}{*} \PY{n}{i} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
              
              \PY{c+c1}{\PYZsh{} Calculate interpolated y values}
              \PY{n}{y\PYZus{}new} \PY{o}{=} \PY{p}{[}\PY{n}{interp1d}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)}\PY{p}{(}\PY{n}{i}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{x\PYZus{}new}\PY{p}{]}
@@ -382,7 +383,7 @@ Aus dem Graphen der Fourier-Transformation kann man erkennen, dass das
 Signal ein breites Spektrum an Frequenzen enthält.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}28}]:} \PY{k}{def} \PY{n+nf}{fft}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{frequency}\PY{p}{)}\PY{p}{:}
+{\color{incolor}In [{\color{incolor}16}]:} \PY{k}{def} \PY{n+nf}{fft}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{frequency}\PY{p}{)}\PY{p}{:}
              \PY{c+c1}{\PYZsh{} Get real amplitudes of FFT (only in positive frequencies)}
              \PY{n}{fft\PYZus{}values} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{absolute}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{fft}\PY{o}{.}\PY{n}{rfft}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{)}
          
@@ -410,33 +411,32 @@ Signal ein breites Spektrum an Frequenzen enthält.
     
     \subsubsection{Bandpass-Filter}\label{bandpass-filter}
 
-Man kann deutlich erkennen, dass sich die größte Leistung im Bereich
-unter 20 Hz befindet. Gerade im hochfrequenten Bereich finden sich viele
+Man erkennt deutlich, dass sich die größte Leistung im Bereich unter 20
+Hz befindet. Gerade im hochfrequenten Bereich finden sich viele
 Störsignale. Diese stammen hauptsächlich von drei Quellen: erstens von
 körpereigenen Stromflüssen, welche nicht für die Messung relevant sind;
-zweitens von externen Interferenzen (z.B.: Wechselstrom: 50 Hz) und
-drittens werden sie einfach durch eine praktisch unmögliche 100\% exakte
-Messung hervorgerufen. Um ein sauberes Signal zu erhalten werden diese
-Frequenzen mittels eines Hochpass-Filters entfernd. Die richtige Wahl
-der Grenzfrequenz ist dabei kritisch. Einerseits sollte sie niedrig
-gehalten werden, um einen möglichst großen Bereich von Störfrequenzen zu
-entfernen. Andererseits darf sie auch nicht zu klein sein, da dadurch
-das Signal verfälscht wird. Da bei dieser Messung die Testperson
-deutlich und nicht besonders schnell blinzelte, kann eine relativ kleine
-Grenzfrequenz von 5 Hz für den Hochpassfilter verwendet werden.
-Zusätzlich kann ein Tiefpass-Filter verwendet werden, welcher tiefe
-Frequnzen unterhalb einer bestimmten Grenzfrequenz entfernd. Somit wird
-das Signal unterschiedlich stark zu 0 V hingezogen. Bei der
-Elektrookulografie ist dies grundsätzlich nicht sinnvoll. Der
-eigentliche Messwert, aus dem man den Blickrichtungswinkel ableiten
-kann, wird dadurch verfälscht. Bei der Detektierung des Blinzelns
-hingegend ist nicht der exakte Wert der gemessenen Spannung zu einem
-bestimmten Zeitpunk ausschlaggebend, sondern die Änderung der Spannung
-innerhalb eines bestimmten Frequenzbereichs. Deshalb ist ein
-Tiefpassfilter sinvoll, da dadurch die Peaks deutlicher erkennbar sind.
-Hier wird eine Grenzfrequenz von 2 Hz für den Tiefpass-Filter verwendet.
-In Summe bedeutet dies, dass nur der Frequenzbereich zwischen 2 und 5 Hz
-betrachtet wird.
+zweitens von externen Interferenzen (z.B.: Wechselstrom: 50 Hz); und
+drittens werden sie durch unvermeidbare Messabweichungen hervorgerufen.
+Um ein sauberes Signal zu erhalten, werden diese Frequenzen mittels
+eines Hochpass-Filters entfernt. Die richtige Wahl der Grenzfrequenz ist
+dabei kritisch. Einerseits sollte sie niedrig gehalten werden, um einen
+möglichst großen Bereich von Störfrequenzen zu entfernen, andererseits
+darf sie auch nicht zu klein sein, da dadurch das Signal verfälscht
+wird. Bei dieser Messung blinzelte die Testperson deutlich und nicht
+besonders schnell. Somit kann eine relativ kleine Grenzfrequenz von 5 Hz
+für den Hochpassfilter verwendet werden. Zusätzlich kann ein
+Tiefpass-Filter verwendet werden, welcher tiefe Frequenzen unterhalb
+einer bestimmten Grenzfrequenz entfernt. Somit wird das Signal
+unterschiedlich stark zu 0 Volt hingezogen. Bei der Elektrookulografie
+ist dies grundsätzlich nicht sinnvoll. Der eigentliche Messwert, aus dem
+man den Blickrichtungswinkel ableiten kann, wird dadurch verfälscht. Bei
+der Detektierung des Blinzelns hingegen, ist nicht der exakte Wert der
+gemessenen Spannung zu einem bestimmten Zeitpunkt ausschlaggebend,
+sondern die Änderung der Spannung innerhalb eines bestimmten
+Frequenzbereichs. Deshalb ist ein Tiefpassfilter sinnvoll, da dadurch
+die Peaks deutlicher erkennbar sind. Hier wird eine Grenzfrequenz von 2
+Hz für den Tiefpass-Filter verwendet. In Summe bedeutet dies, dass nur
+der Frequenzbereich zwischen 2 und 5 Hz betrachtet wird.
 
     \begin{Verbatim}[commandchars=\\\{\}]
 {\color{incolor}In [{\color{incolor}17}]:} \PY{k}{def} \PY{n+nf}{butter\PYZus{}bandpass\PYZus{}filter}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{lowcut}\PY{p}{,} \PY{n}{highcut}\PY{p}{,} \PY{n}{frequency}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
@@ -453,13 +453,13 @@ betrachtet wird.
 \end{Verbatim}
 
 
-    Im folgendem Diagramm kann man die Graphen des ungefilterten Signals
-(rot) und des gefilterten (blau) vergleichen. Man kann ausserdem
-Beobachten, welche Auswirkung die Veränderung der Grenzfrequenzen des
-Tief- und Hochpass-Filters auf das Signal hat.
+    Im folgenden Diagramm kann man die Graphen des ungefilterten Signals
+(rot) und des gefilterten Signals (blau) vergleichen. Außerdem kann
+beobachtet werden, welche Auswirkung die Veränderung der Grenzfrequenzen
+des Tief- und Hochpass-Filters auf das Signal hat.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}29}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
          \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Unfiltered signal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
          \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t (s)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
          \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{U (μV)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -486,25 +486,25 @@ Tief- und Hochpass-Filters auf das Signal hat.
 
 Das Blinzeln ist als relativ starker Peak im Signal erkennbar. Das Ziel
 ist es nun diese Peaks zu detektieren. Zunächst werden alle lokalen
-Maxima bestimmt. Dann wird ein Schwellwert definiert, ab welchen ein
+Maxima bestimmt. Dann wird ein Schwellenwert definiert, ab welchem ein
 Peak als Blinzeln gezählt wird. Die Größe der gemessenen Spannung und
-somit auch das Ausmaß des Ausschlages der Peaks variert von Messung zu
+somit auch das Ausmaß des Ausschlages der Peaks variiert von Messung zu
 Messung sehr stark. Dies kann von der momentanen Hautleitfähigkeit, aber
-auch durch das leicht unterschiedliche Aufbringen der Sensoren
-beinflusst werden. Aus diesem Grunde ist es nicht sinnvoll einen fixen,
-konkreten Schwellwert zu definieren, sondern ihn bei jeder Session
-dynamisch zu berechnen. Hier wird als Schwellwert einfach der größte
-gemessene Wert multipliziert mit 0.75 verwendet. Dabei werden zwei
-Bedingungen vorausgesetzt. Erstens muss im betrachtetem Intervall
-mindestens ein Peak eines Blinzelns vorhanden sein. Ansonst würde ein
-viel zu geringer Schwellwert berechnet werden und es würden bereits
-kleinere Peaks fälschlicherweise als Blinzeln interpretiert werden.
-Zweitens muss das Signal beim nicht Blinzeln um die 0 V sein und der
-Ausschlag muss mindestens positiv sein. Dies kann durch Verwendung eines
+auch durch das leicht unterschiedliche Anbringen der Sensoren
+beeinflusst werden. Aus diesem Grund ist es nicht sinnvoll, einen fixen,
+konkreten Schwellenwert zu definieren, sondern ihn bei jeder Session
+dynamisch zu berechnen. Hier wird als Schwellenwert einfach der größte
+gemessene Wert, multipliziert mit 0.75, verwendet. Dabei werden zwei
+Bedingungen vorausgesetzt. Erstens muss im betrachteten Intervall
+mindestens ein Peak eines Blinzelns vorhanden sein. Andernfalls würde
+ein viel zu geringer Schwellenwert berechnet werden und es würden
+bereits kleinere Peaks fälschlicherweise als Blinzeln interpretiert
+werden. Zweitens muss das Signal bei Nicht-Blinzeln um die 0 Volt sein
+und der Ausschlag muss positiv sein. Dies kann durch Verwendung eines
 Tiefpass-Filters garantiert werden.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}27}]:} \PY{k}{def} \PY{n+nf}{detect\PYZus{}peaks}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{:}
+{\color{incolor}In [{\color{incolor}19}]:} \PY{k}{def} \PY{n+nf}{detect\PYZus{}peaks}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{:}
              \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Get indices all peaks\PYZdq{}\PYZdq{}\PYZdq{}}
              \PY{c+c1}{\PYZsh{} Peak: value has to be greater than previous and following value}
              \PY{n}{peaks} \PY{o}{=} \PY{p}{[}\PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{y}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)} \PY{k}{if} \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o+ow}{and} \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
@@ -562,16 +562,16 @@ Detected blinks: 3
 
     \end{Verbatim}
 
-    Aus den Ergebnisen kann man erkennen, dass im ersten Fall, bei
-Analysierung des ungefilterten Siganls, die Detektierung nicht
-funktioniert hat. Es wurden viele lokale Maxima (15) fälschlicherweise
-als Blinzeln gewertet. Dies ist auf die Nichterfüllung der zweiten
-Bedingung zurückzuführen. Beim Nichtblinzeln beträgt das Signal zwischen
-0.2 und 0.3 μV und nicht wie vorausgesetzt um die 0 V. Außerdem schlägt
-das Signal beim Blinzeln nur negativ aus. Deshalb wurden trotz der
-vielen false-positive Detektierungen die eigentlichen Blizel-Peaks nicht
+    Aus den Ergebnissen erkennt man, dass im ersten Fall, bei Analysierung
+des ungefilterten Signals, die Detektierung nicht funktioniert hat. Es
+wurden viele lokale Maxima (15) fälschlicherweise als Blinzeln gewertet.
+Dies ist auf die Nichterfüllung der zweiten Bedingung zurückzuführen.
+Beim Nicht-Blinzeln beträgt das Signal zwischen 0.2 und 0.3 Mikrovolt
+und nicht wie vorausgesetzt um die 0 Volt. Außerdem schlägt das Signal
+beim Blinzeln negativ aus. Deshalb wurden trotz der vielen
+falsch-positiv-Detektierungen die eigentlichen Blizel-Peaks nicht
 erkannt. Im zweiten Fall, bei der Analysierung des gefilterten Signals,
-wurden das dreifache Blinzeln der Testperson richtig erkannt!
+wurde das dreifache Blinzeln der Testperson richtig erkannt!
 
 
     % Add a bibliography block to the postdoc
